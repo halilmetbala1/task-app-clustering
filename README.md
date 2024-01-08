@@ -12,7 +12,7 @@ Task-App repositories should start with `task-app-` and end with the task type (
 
 ## Development
 
-See [CONTRIBUTING.md](https://github.com/martin-temp/task-app-starter/blob/main/CONTRIBUTING.md) for details.
+See [CONTRIBUTING.md](https://github.com/eTutor-plus-plus/task-app-starter/blob/main/CONTRIBUTING.md) for details.
 
 ## Docker
 

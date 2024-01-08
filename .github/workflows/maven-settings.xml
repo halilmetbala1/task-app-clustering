@@ -17,10 +17,13 @@
                 </repository>
                 <repository>
                     <id>github</id>
-                    <url>https://maven.pkg.github.com/martin-temp/task-app-starter</url>
+                    <url>https://maven.pkg.github.com/eTutor-plus-plus/task-app-starter</url>
                     <snapshots>
                         <enabled>true</enabled>
                     </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
                 </repository>
             </repositories>
         </profile>
