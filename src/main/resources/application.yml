@@ -1,0 +1,73 @@
+spring:
+  application:
+    name: eTutor Task-App - Binary Search
+  messages:
+    fallback-to-system-locale: false
+
+  # Database
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+
+  # Server
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  mvc:
+    format:
+      date-time: iso
+    problemdetails:
+      enabled: true
+
+# Server
+server:
+  port: 8081
+
+# API docs
+springdoc:
+  #show-actuator: true
+  swagger-ui:
+    path: /docs
+    operations-sorter: alpha
+    tags-sorter: alpha
+  api-docs:
+    path: /api-docs
+
+# Logging
+logging:
+  include-application-name: false
+  logback:
+    rollingpolicy:
+      file-name-pattern: logs/task-app-binary-search.%d{yyyy-MM-dd}.%i.log
+      max-file-size: 50MB
+      max-history: 14
+  file:
+    name: logs/task-app-binary-search.log
+
+# Actuator
+management:
+  info:
+    os:
+      enabled: true
+    java:
+      enabled: true
+    git:
+      mode: full
+  endpoint:
+    env:
+      show-values: ALWAYS
+  endpoints:
+    web:
+      exposure:
+        include:
+          - env
+          - flyway
+          - health
+          - httpexchanges
+          - info
+          - logfile
+          - metrics

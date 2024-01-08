@@ -1,0 +1,11 @@
+${AnsiColor.RED}    _______    _              ${AnsiColor.BLACK} ____  _                           _____                     _
+${AnsiColor.RED}   |__   __|  | |             ${AnsiColor.BLACK}|  _ \(_)                         / ____|                   | |
+${AnsiColor.RED}   ___| |_   _| |_ ___  _ __  ${AnsiColor.BLACK}| |_) |_ _ __   __ _ _ __ _   _  | (___   ___  __ _ _ __ ___| |__
+${AnsiColor.RED}  / _ \ | | | | __/ _ \| '__| ${AnsiColor.BLACK}|  _ <| | '_ \ / _` | '__| | | |  \___ \ / _ \/ _` | '__/ __| '_ \
+${AnsiColor.RED} |  __/ | |_| | || (_) | |    ${AnsiColor.BLACK}| |_) | | | | | (_| | |  | |_| |  ____) |  __/ (_| | | | (__| | | |
+${AnsiColor.RED}  \___|_|\__,_|\__\___/|_|    ${AnsiColor.BLACK}|____/|_|_| |_|\__,_|_|   \__, | |_____/ \___|\__,_|_|  \___|_| |_|
+${AnsiColor.RED}                              ${AnsiColor.BLACK}                           __/ |
+${AnsiColor.RED}                              ${AnsiColor.BLACK}                          |___/
+
+${application.title} ${AnsiColor.GREEN}${application.version}${AnsiColor.BLACK}
+${AnsiColor.BRIGHT_BLACK}Powered by Spring Boot ${spring-boot.version}${AnsiColor.BLACK}

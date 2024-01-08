@@ -1,0 +1,46 @@
+# Logging
+logging:
+  level:
+    ROOT: info
+
+# Server
+server:
+  shutdown: GRACEFUL
+
+# Springdoc
+springdoc:
+  api-docs:
+    enabled: false
+
+# Spring
+spring:
+  jpa:
+    show-sql: false
+
+# Specify the following settings via environment variables in the docker container.
+## Database
+#spring:
+#  datasource:
+#    url: jdbc:postgresql://localhost:5434/etutor_binary_search
+#    username: etutor
+#    password: TBD
+#  flyway:
+#    user: etutor_binary_search_admin
+#    password: TBD
+#
+## API key definition
+#clients:
+#  api-keys:
+#    - name: task-administration
+#      key: TBD
+#      roles:
+#       - CRUD
+#       - SUBMIT
+#    - name: jobe-server
+#      key: TBD
+#      roles:
+#       - SUBMIT
+#    - name: plag-check
+#      key: TBD
+#      roles:
+#       - READ_SUBMISSION

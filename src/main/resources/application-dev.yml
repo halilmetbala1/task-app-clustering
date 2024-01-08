@@ -1,0 +1,27 @@
+# Logging
+logging:
+  level:
+    ROOT: info
+    at.jku.dke: trace
+
+# Data
+spring:
+  jpa:
+    show-sql: true
+
+# API key definition
+clients:
+  api-keys:
+    - name: task-administration
+      key: task-admin-key
+      roles:
+        - CRUD
+        - SUBMIT
+    - name: jobe-server
+      key: jobe-server-key
+      roles:
+        - SUBMIT
+    - name: plag-check
+      key: plag-check-key
+      roles:
+        - READ_SUBMISSION
