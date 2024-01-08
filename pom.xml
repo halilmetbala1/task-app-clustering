@@ -12,7 +12,7 @@
 
     <groupId>at.jku.dke.etutor</groupId>
     <artifactId>task-app-binary-search</artifactId>
-    <version>1.0.0</version>
+    <version>0.0.1</version>
 
     <name>eTutor Task-App: Binary Search</name>
     <description>eTutor Task-App for task types "binarysearch"</description>
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>at.jku.dke.etutor</groupId>
             <artifactId>etutor-task-app-starter</artifactId>
-            <version>1.0.1</version>
+            <version>0.0.1</version>
         </dependency>
 
         <!-- Spring -->
