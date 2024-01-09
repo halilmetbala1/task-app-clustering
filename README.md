@@ -12,6 +12,8 @@ Task-App repositories should start with `task-app-` and end with the task type (
 
 ## Development
 
+In development environment, the API documentation is available at http://localhost:8081/docs.
+
 See [CONTRIBUTING.md](https://github.com/eTutor-plus-plus/task-app-starter/blob/main/CONTRIBUTING.md) for details.
 
 ## Docker

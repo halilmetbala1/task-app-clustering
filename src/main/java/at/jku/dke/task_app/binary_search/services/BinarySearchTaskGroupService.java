@@ -18,7 +18,7 @@ public class BinarySearchTaskGroupService extends BaseTaskGroupService<BinarySea
      *
      * @param repository The task group repository.
      */
-    protected BinarySearchTaskGroupService(BinarySearchTaskGroupRepository repository) {
+    public BinarySearchTaskGroupService(BinarySearchTaskGroupRepository repository) {
         super(repository);
     }
 

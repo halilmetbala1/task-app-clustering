@@ -26,7 +26,7 @@ public class BinarySearchSubmissionService extends BaseSubmissionService<BinaryS
      * @param taskRepository       The task repository.
      * @param evaluationService    The evaluation service.
      */
-    protected BinarySearchSubmissionService(BinarySearchSubmissionRepository submissionRepository, BinarySearchTaskRepository taskRepository, EvaluationService evaluationService) {
+    public BinarySearchSubmissionService(BinarySearchSubmissionRepository submissionRepository, BinarySearchTaskRepository taskRepository, EvaluationService evaluationService) {
         super(submissionRepository, taskRepository);
         this.evaluationService = evaluationService;
     }
