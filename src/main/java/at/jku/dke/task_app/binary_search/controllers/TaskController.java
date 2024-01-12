@@ -6,6 +6,7 @@ import at.jku.dke.task_app.binary_search.data.entities.BinarySearchTask;
 import at.jku.dke.task_app.binary_search.dto.BinarySearchTaskDto;
 import at.jku.dke.task_app.binary_search.dto.ModifyBinarySearchTaskDto;
 import at.jku.dke.task_app.binary_search.services.BinarySearchTaskService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,6 +47,7 @@ public class TaskController extends BaseTaskController<BinarySearchTask, BinaryS
      */
     @GetMapping(value = "/random", produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize(AuthConstants.CRUD_AUTHORITY)
+    @SecurityRequirement(name = AuthConstants.API_KEY_REQUIREMENT)
     public ResponseEntity<Serializable> getRandomNumbers() {
         var rand = new Random();
         var min = rand.nextInt(100);
