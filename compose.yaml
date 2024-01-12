@@ -6,6 +6,6 @@ services:
     environment:
       - 'POSTGRES_DB=etutor_binary_search'
       - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=etutor_binary_search_admin'
+      - 'POSTGRES_USER=etutor_binary_search'
     ports:
-      - '5432'
+      - '5434:5432'
