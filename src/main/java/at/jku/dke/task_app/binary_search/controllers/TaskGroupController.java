@@ -3,6 +3,7 @@ package at.jku.dke.task_app.binary_search.controllers;
 import at.jku.dke.etutor.task_app.auth.AuthConstants;
 import at.jku.dke.etutor.task_app.controllers.BaseTaskGroupController;
 import at.jku.dke.task_app.binary_search.data.entities.BinarySearchTaskGroup;
+import at.jku.dke.task_app.binary_search.dto.MinMaxDto;
 import at.jku.dke.task_app.binary_search.dto.ModifyBinarySearchTaskGroupDto;
 import at.jku.dke.task_app.binary_search.dto.BinarySearchTaskGroupDto;
 import at.jku.dke.task_app.binary_search.services.BinarySearchTaskGroupService;
@@ -13,9 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -48,11 +46,10 @@ public class TaskGroupController extends BaseTaskGroupController<BinarySearchTas
     @GetMapping(value = "/random", produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize(AuthConstants.CRUD_AUTHORITY)
     @SecurityRequirement(name = AuthConstants.API_KEY_REQUIREMENT)
-    public ResponseEntity<Serializable> getRandomNumbers() {
+    public ResponseEntity<MinMaxDto> getRandomNumbers() {
         var rand = new Random();
         var min = rand.nextInt(100);
-        var map = Map.of("min", min, "max", rand.nextInt(min + 1, 1000));
-        return ResponseEntity.ok(new HashMap<>(map));
+        return ResponseEntity.ok(new MinMaxDto(min,  rand.nextInt(min + 1, 1000)));
     }
 
 }
