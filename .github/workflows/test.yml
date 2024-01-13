@@ -28,13 +28,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: 'maven'
-
       - name: Checkout Starter Library
         uses: actions/checkout@v4
         with:
@@ -42,14 +35,21 @@ jobs:
           ref: main
           path: starter
 
-      - name: Install Starter Library with Maven
-        working-directory: starter
-        run: mvn clean install --file pom.xml
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
           path: app
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Install Starter Library with Maven
+        working-directory: starter
+        run: mvn clean install --file pom.xml
 
       - name: Test with Maven
         working-directory: app
