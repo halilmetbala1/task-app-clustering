@@ -12,7 +12,7 @@
 
     <groupId>at.jku.dke.etutor</groupId>
     <artifactId>task-app-binary-search</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 
     <name>eTutor Task-App: Binary Search</name>
     <description>eTutor Task-App for task types "binarysearch"</description>

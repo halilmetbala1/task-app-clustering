@@ -16,7 +16,7 @@ class BinarySearchTaskServiceTest {
     void createTask() {
         // Arrange
         ModifyTaskDto<ModifyBinarySearchTaskDto> dto = new ModifyTaskDto<>(7L, BigDecimal.TEN, "binary_search", TaskStatus.APPROVED, new ModifyBinarySearchTaskDto(33));
-        BinarySearchTaskService service = new BinarySearchTaskService(null, null);
+        BinarySearchTaskService service = new BinarySearchTaskService(null, null, null);
 
         // Act
         BinarySearchTask task = service.createTask(3, dto);
@@ -29,7 +29,7 @@ class BinarySearchTaskServiceTest {
     void updateTask() {
         // Arrange
         ModifyTaskDto<ModifyBinarySearchTaskDto> dto = new ModifyTaskDto<>(7L, BigDecimal.TEN, "binary_search", TaskStatus.APPROVED, new ModifyBinarySearchTaskDto(33));
-        BinarySearchTaskService service = new BinarySearchTaskService(null, null);
+        BinarySearchTaskService service = new BinarySearchTaskService(null, null, null);
         BinarySearchTask task = new BinarySearchTask(3);
 
         // Act

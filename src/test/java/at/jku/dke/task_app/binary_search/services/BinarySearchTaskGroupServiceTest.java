@@ -6,9 +6,7 @@ import at.jku.dke.task_app.binary_search.data.entities.BinarySearchTaskGroup;
 import at.jku.dke.task_app.binary_search.dto.ModifyBinarySearchTaskGroupDto;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BinarySearchTaskGroupServiceTest {
 
@@ -16,7 +14,7 @@ class BinarySearchTaskGroupServiceTest {
     void createTaskGroup() {
         // Arrange
         ModifyTaskGroupDto<ModifyBinarySearchTaskGroupDto> dto = new ModifyTaskGroupDto<>("binary_search", TaskStatus.APPROVED, new ModifyBinarySearchTaskGroupDto(1, 2));
-        BinarySearchTaskGroupService service = new BinarySearchTaskGroupService(null);
+        BinarySearchTaskGroupService service = new BinarySearchTaskGroupService(null, null);
 
         // Act
         var taskGroup = service.createTaskGroup(3, dto);
@@ -30,7 +28,7 @@ class BinarySearchTaskGroupServiceTest {
     void updateTaskGroup() {
         // Arrange
         ModifyTaskGroupDto<ModifyBinarySearchTaskGroupDto> dto = new ModifyTaskGroupDto<>("binary_search", TaskStatus.APPROVED, new ModifyBinarySearchTaskGroupDto(1, 2));
-        BinarySearchTaskGroupService service = new BinarySearchTaskGroupService(null);
+        BinarySearchTaskGroupService service = new BinarySearchTaskGroupService(null, null);
         var taskGroup = new BinarySearchTaskGroup(3, 4);
 
         // Act
