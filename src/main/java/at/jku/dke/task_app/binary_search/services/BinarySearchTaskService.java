@@ -1,6 +1,7 @@
 package at.jku.dke.task_app.binary_search.services;
 
 import at.jku.dke.etutor.task_app.dto.ModifyTaskDto;
+import at.jku.dke.etutor.task_app.dto.TaskModificationResponseDto;
 import at.jku.dke.etutor.task_app.services.BaseTaskService;
 import at.jku.dke.task_app.binary_search.data.entities.BinarySearchTask;
 import at.jku.dke.task_app.binary_search.data.entities.BinarySearchTaskGroup;
@@ -10,8 +11,6 @@ import at.jku.dke.task_app.binary_search.dto.ModifyBinarySearchTaskDto;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Locale;
 
 /**
@@ -45,12 +44,10 @@ public class BinarySearchTaskService extends BaseTaskService<BinarySearchTask, B
     }
 
     @Override
-    protected Serializable mapToReturnData(BinarySearchTask task, boolean create) {
-        // generate default task description
-        var map = new HashMap<String, String>();
-        map.put("en", this.messageSource.getMessage("defaultDescription", new Object[]{task.getTaskGroup().getMinNumber(), task.getTaskGroup().getMaxNumber()}, Locale.ENGLISH));
-        map.put("de", this.messageSource.getMessage("defaultDescription", new Object[]{task.getTaskGroup().getMinNumber(), task.getTaskGroup().getMaxNumber()}, Locale.GERMAN));
-        return map;
+    protected TaskModificationResponseDto mapToReturnData(BinarySearchTask task, boolean create) {
+        return new TaskModificationResponseDto(
+            this.messageSource.getMessage("defaultTaskDescription", null, Locale.GERMAN),
+            this.messageSource.getMessage("defaultTaskDescription", null, Locale.ENGLISH)
+        );
     }
-
 }
