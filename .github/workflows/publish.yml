@@ -48,7 +48,7 @@ jobs:
 
       - name: Clean and Compile with maven
         working-directory: app
-        run: mvn -B clean compile --file pom.xml
+        run: mvn -B clean git-commit-id:revision spring-boot:build-info compile --file pom.xml
 
       - name: Build with Maven
         working-directory: app

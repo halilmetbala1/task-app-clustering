@@ -29,7 +29,7 @@ server:
 
 # API docs
 springdoc:
-  #show-actuator: true
+  show-actuator: true
   swagger-ui:
     path: /docs
     operations-sorter: alpha
@@ -50,6 +50,11 @@ logging:
 
 # Actuator
 management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
   info:
     os:
       enabled: true
@@ -60,6 +65,13 @@ management:
   endpoint:
     env:
       show-values: ALWAYS
+    health:
+      probes:
+        enabled: true
+      show-details: WHEN_AUTHORIZED
+      show-components: WHEN_AUTHORIZED
+      roles:
+        - CRUD
   endpoints:
     web:
       exposure:
@@ -71,3 +83,5 @@ management:
           - info
           - logfile
           - metrics
+          - livenessstate
+          - readinessstate
