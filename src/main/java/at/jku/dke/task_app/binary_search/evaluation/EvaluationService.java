@@ -53,11 +53,11 @@ public class EvaluationService {
         // find task
         var task = this.taskRepository.findById(submission.taskId()).orElseThrow(() -> new EntityNotFoundException("Task " + submission.taskId() + " does not exist."));
 
-        // only apps with CRUD role are allowed to execute not approved tasks
-        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().noneMatch(x -> x.getAuthority().equals(AuthConstants.CRUD))
-            && (task.getStatus() != TaskStatus.APPROVED || task.getTaskGroup().getStatus() != TaskStatus.APPROVED)) {
-            throw new ConstraintViolationException("Task (or task group) is not approved.", null);
-        }
+        // only apps with CRUD role are allowed to execute not approved tasks (does not work when using in dispatched mode)
+//        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().noneMatch(x -> x.getAuthority().equals(AuthConstants.CRUD))
+//            && (task.getStatus() != TaskStatus.APPROVED || task.getTaskGroup().getStatus() != TaskStatus.APPROVED)) {
+//            throw new ConstraintViolationException("Task (or task group) is not approved.", null);
+//        }
 
         // evaluate input
         LOG.info("Evaluating input for task {} with mode {} and feedback-level {}", submission.taskId(), submission.mode(), submission.feedbackLevel());

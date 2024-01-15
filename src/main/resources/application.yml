@@ -29,7 +29,7 @@ server:
 
 # API docs
 springdoc:
-  show-actuator: true
+  #show-actuator: true
   swagger-ui:
     path: /docs
     operations-sorter: alpha
