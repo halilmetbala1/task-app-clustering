@@ -1,18 +1,14 @@
 package at.jku.dke.task_app.binary_search.evaluation;
 
-import at.jku.dke.etutor.task_app.auth.AuthConstants;
 import at.jku.dke.etutor.task_app.dto.CriterionDto;
 import at.jku.dke.etutor.task_app.dto.GradingDto;
 import at.jku.dke.etutor.task_app.dto.SubmitSubmissionDto;
-import at.jku.dke.etutor.task_app.dto.TaskStatus;
 import at.jku.dke.task_app.binary_search.data.repositories.BinarySearchTaskRepository;
 import at.jku.dke.task_app.binary_search.dto.BinarySearchSubmissionDto;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,12 +49,6 @@ public class EvaluationService {
         // find task
         var task = this.taskRepository.findById(submission.taskId()).orElseThrow(() -> new EntityNotFoundException("Task " + submission.taskId() + " does not exist."));
 
-        // only apps with CRUD role are allowed to execute not approved tasks (does not work when using in dispatched mode)
-//        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().noneMatch(x -> x.getAuthority().equals(AuthConstants.CRUD))
-//            && (task.getStatus() != TaskStatus.APPROVED || task.getTaskGroup().getStatus() != TaskStatus.APPROVED)) {
-//            throw new ConstraintViolationException("Task (or task group) is not approved.", null);
-//        }
-
         // evaluate input
         LOG.info("Evaluating input for task {} with mode {} and feedback-level {}", submission.taskId(), submission.mode(), submission.feedbackLevel());
         Locale locale = Locale.of(submission.language());
@@ -92,7 +82,7 @@ public class EvaluationService {
         // evaluate and grade
         switch (submission.mode()) {
             case RUN:
-                feedback = this.messageSource.getMessage("input", new Object[]{submission.submission()}, locale);
+                feedback = this.messageSource.getMessage("input", new Object[]{submission.submission().input()}, locale);
                 break;
             case DIAGNOSE:
                 feedback = this.messageSource.getMessage(error == null && input.equals(task.getSolution()) ? "correct" : "incorrect", null, locale);
@@ -100,12 +90,12 @@ public class EvaluationService {
                     int diff = task.getSolution() - input;
                     if (diff == 0)
                         points = task.getMaxPoints();
-
-                    criteria.add(new CriterionDto(
-                        this.messageSource.getMessage("criterium.value", null, locale),
-                        points,
-                        diff == 0,
-                        this.messageSource.getMessage(diff < 0 ? "criterium.value.less" : (diff > 0 ? "criterium.value.greater" : "criterium.value.equals"), null, locale)));
+                    if (submission.feedbackLevel() > 0)
+                        criteria.add(new CriterionDto(
+                            this.messageSource.getMessage("criterium.value", null, locale),
+                            points,
+                            diff == 0,
+                            this.messageSource.getMessage(diff < 0 ? "criterium.value.less" : (diff > 0 ? "criterium.value.greater" : "criterium.value.equals"), null, locale)));
                 }
                 break;
             case SUBMIT:

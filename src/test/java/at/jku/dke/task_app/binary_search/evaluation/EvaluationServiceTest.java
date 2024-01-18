@@ -1,6 +1,5 @@
 package at.jku.dke.task_app.binary_search.evaluation;
 
-import at.jku.dke.etutor.task_app.auth.AuthConstants;
 import at.jku.dke.etutor.task_app.dto.SubmissionMode;
 import at.jku.dke.etutor.task_app.dto.SubmitSubmissionDto;
 import at.jku.dke.etutor.task_app.dto.TaskStatus;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.math.BigDecimal;
 
@@ -44,7 +42,24 @@ class EvaluationServiceTest {
     }
 
     @Test
-    @WithMockUser(roles = AuthConstants.SUBMIT)
+    void evaluateRun() {
+        // Arrange
+        SubmitSubmissionDto<BinarySearchSubmissionDto> dto = new SubmitSubmissionDto<>("test-user", "test-assignment", taskId,
+            "en", SubmissionMode.RUN, 3, new BinarySearchSubmissionDto("20"));
+
+        // Act
+        var result = evaluationService.evaluate(dto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(BigDecimal.ZERO.stripTrailingZeros(), result.points().stripTrailingZeros());
+        assertEquals(BigDecimal.TEN.stripTrailingZeros(), result.maxPoints().stripTrailingZeros());
+        assertEquals("Your Input: 20", result.generalFeedback());
+        assertTrue(result.criteria().stream().anyMatch(x -> x.name().equals("Syntax") && x.feedback().equals("Valid Number")));
+        assertEquals(1, result.criteria().size());
+    }
+
+    @Test
     void evaluateSubmitValid() {
         // Arrange
         SubmitSubmissionDto<BinarySearchSubmissionDto> dto = new SubmitSubmissionDto<>("test-user", "test-assignment", taskId,
@@ -58,9 +73,137 @@ class EvaluationServiceTest {
         assertEquals(BigDecimal.TEN.stripTrailingZeros(), result.points().stripTrailingZeros());
         assertEquals(BigDecimal.TEN.stripTrailingZeros(), result.maxPoints().stripTrailingZeros());
         assertEquals("Your solution is correct.", result.generalFeedback());
+        assertTrue(result.criteria().stream().anyMatch(x -> x.name().equals("Syntax") && x.feedback().equals("Valid Number")));
         assertEquals(1, result.criteria().size());
     }
 
-    // TODO: Add more tests
+    @Test
+    void evaluateSubmitInvalidSyntax() {
+        // Arrange
+        SubmitSubmissionDto<BinarySearchSubmissionDto> dto = new SubmitSubmissionDto<>("test-user", "test-assignment", taskId,
+            "en", SubmissionMode.SUBMIT, 3, new BinarySearchSubmissionDto("20 jku"));
 
+        // Act
+        var result = evaluationService.evaluate(dto);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.criteria().stream().anyMatch(x -> x.name().equals("Syntax")));
+        assertEquals("Your solution is incorrect.", result.generalFeedback());
+        assertEquals(BigDecimal.ZERO.stripTrailingZeros(), result.points().stripTrailingZeros());
+        assertEquals(BigDecimal.TEN.stripTrailingZeros(), result.maxPoints().stripTrailingZeros());
+        assertEquals(1, result.criteria().size());
+    }
+
+    @Test
+    void evaluateSubmitTooSmall() {
+        // Arrange
+        SubmitSubmissionDto<BinarySearchSubmissionDto> dto = new SubmitSubmissionDto<>("test-user", "test-assignment", taskId,
+            "en", SubmissionMode.SUBMIT, 3, new BinarySearchSubmissionDto("18"));
+
+        // Act
+        var result = evaluationService.evaluate(dto);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.criteria().stream().anyMatch(x -> x.name().equals("Syntax") && x.feedback().equals("Valid Number")));
+        assertEquals("Your solution is incorrect.", result.generalFeedback());
+        assertEquals(BigDecimal.ZERO.stripTrailingZeros(), result.points().stripTrailingZeros());
+        assertEquals(BigDecimal.TEN.stripTrailingZeros(), result.maxPoints().stripTrailingZeros());
+        assertEquals(1, result.criteria().size());
+    }
+
+    @Test
+    void evaluateDiagnoseValid() {
+        // Arrange
+        SubmitSubmissionDto<BinarySearchSubmissionDto> dto = new SubmitSubmissionDto<>("test-user", "test-assignment", taskId,
+            "en", SubmissionMode.DIAGNOSE, 3, new BinarySearchSubmissionDto("20"));
+
+        // Act
+        var result = evaluationService.evaluate(dto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(BigDecimal.TEN.stripTrailingZeros(), result.points().stripTrailingZeros());
+        assertEquals(BigDecimal.TEN.stripTrailingZeros(), result.maxPoints().stripTrailingZeros());
+        assertEquals("Your solution is correct.", result.generalFeedback());
+        assertEquals(2, result.criteria().size());
+        assertTrue(result.criteria().stream().anyMatch(x -> x.name().equals("Syntax") && x.feedback().equals("Valid Number")));
+        assertTrue(result.criteria().stream().anyMatch(x -> x.name().equals("Value") && x.feedback().equals("You have found the searched number.")));
+    }
+
+    @Test
+    void evaluateDiagnoseInvalidSyntax() {
+        // Arrange
+        SubmitSubmissionDto<BinarySearchSubmissionDto> dto = new SubmitSubmissionDto<>("test-user", "test-assignment", taskId,
+            "en", SubmissionMode.DIAGNOSE, 3, new BinarySearchSubmissionDto("20 test"));
+
+        // Act
+        var result = evaluationService.evaluate(dto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(BigDecimal.ZERO.stripTrailingZeros(), result.points().stripTrailingZeros());
+        assertEquals(BigDecimal.TEN.stripTrailingZeros(), result.maxPoints().stripTrailingZeros());
+        assertEquals("Your solution is incorrect.", result.generalFeedback());
+        assertEquals(1, result.criteria().size());
+        assertTrue(result.criteria().stream().anyMatch(x -> x.name().equals("Syntax")));
+    }
+
+    @Test
+    void evaluateDiagnoseTooBig() {
+        // Arrange
+        SubmitSubmissionDto<BinarySearchSubmissionDto> dto = new SubmitSubmissionDto<>("test-user", "test-assignment", taskId,
+            "en", SubmissionMode.DIAGNOSE, 3, new BinarySearchSubmissionDto("25"));
+
+        // Act
+        var result = evaluationService.evaluate(dto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(BigDecimal.ZERO.stripTrailingZeros(), result.points().stripTrailingZeros());
+        assertEquals(BigDecimal.TEN.stripTrailingZeros(), result.maxPoints().stripTrailingZeros());
+        assertEquals("Your solution is incorrect.", result.generalFeedback());
+        assertEquals(2, result.criteria().size());
+        assertTrue(result.criteria().stream().anyMatch(x -> x.name().equals("Syntax") && x.feedback().equals("Valid Number")));
+        assertTrue(result.criteria().stream().anyMatch(x -> x.name().equals("Value") && x.feedback().equals("The searched number is smaller.")));
+    }
+
+    @Test
+    void evaluateDiagnoseTooSmall() {
+        // Arrange
+        SubmitSubmissionDto<BinarySearchSubmissionDto> dto = new SubmitSubmissionDto<>("test-user", "test-assignment", taskId,
+            "en", SubmissionMode.DIAGNOSE, 3, new BinarySearchSubmissionDto("15"));
+
+        // Act
+        var result = evaluationService.evaluate(dto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(BigDecimal.ZERO.stripTrailingZeros(), result.points().stripTrailingZeros());
+        assertEquals(BigDecimal.TEN.stripTrailingZeros(), result.maxPoints().stripTrailingZeros());
+        assertEquals("Your solution is incorrect.", result.generalFeedback());
+        assertEquals(2, result.criteria().size());
+        assertTrue(result.criteria().stream().anyMatch(x -> x.name().equals("Syntax") && x.feedback().equals("Valid Number")));
+        assertTrue(result.criteria().stream().anyMatch(x -> x.name().equals("Value") && x.feedback().equals("The searched number is bigger.")));
+    }
+
+
+    @Test
+    void evaluateDiagnoseNoFeedback() {
+        // Arrange
+        SubmitSubmissionDto<BinarySearchSubmissionDto> dto = new SubmitSubmissionDto<>("test-user", "test-assignment", taskId,
+            "en", SubmissionMode.DIAGNOSE, 0, new BinarySearchSubmissionDto("15"));
+
+        // Act
+        var result = evaluationService.evaluate(dto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(BigDecimal.ZERO.stripTrailingZeros(), result.points().stripTrailingZeros());
+        assertEquals(BigDecimal.TEN.stripTrailingZeros(), result.maxPoints().stripTrailingZeros());
+        assertEquals("Your solution is incorrect.", result.generalFeedback());
+        assertEquals(1, result.criteria().size());
+        assertTrue(result.criteria().stream().anyMatch(x -> x.name().equals("Syntax") && x.feedback().equals("Valid Number")));
+    }
 }

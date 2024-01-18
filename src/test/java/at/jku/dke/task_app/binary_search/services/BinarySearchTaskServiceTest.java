@@ -1,14 +1,20 @@
 package at.jku.dke.task_app.binary_search.services;
 
 import at.jku.dke.etutor.task_app.dto.ModifyTaskDto;
+import at.jku.dke.etutor.task_app.dto.TaskModificationResponseDto;
 import at.jku.dke.etutor.task_app.dto.TaskStatus;
 import at.jku.dke.task_app.binary_search.data.entities.BinarySearchTask;
 import at.jku.dke.task_app.binary_search.dto.ModifyBinarySearchTaskDto;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.MessageSource;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class BinarySearchTaskServiceTest {
 
@@ -37,6 +43,23 @@ class BinarySearchTaskServiceTest {
 
         // Assert
         assertEquals(dto.additionalData().solution(), task.getSolution());
+    }
+
+    @Test
+    void mapToReturnData() {
+        // Arrange
+        MessageSource ms = mock(MessageSource.class);
+        BinarySearchTaskService service = new BinarySearchTaskService(null, null, ms);
+        BinarySearchTask task = new BinarySearchTask(3);
+        task.setSolution(33);
+
+        // Act
+        TaskModificationResponseDto result = service.mapToReturnData(task, true);
+
+        // Assert
+        assertNotNull(result);
+        verify(ms).getMessage("defaultTaskDescription", null, Locale.GERMAN);
+        verify(ms).getMessage("defaultTaskDescription", null, Locale.ENGLISH);
     }
 
 }
