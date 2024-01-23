@@ -1,6 +1,6 @@
 package at.jku.dke.task_app.binary_search.data.entities;
 
-import at.jku.dke.etutor.task_app.data.entities.BaseTask;
+import at.jku.dke.etutor.task_app.data.entities.BaseTaskInGroup;
 import at.jku.dke.etutor.task_app.dto.TaskStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(name = "task")
-public class BinarySearchTask extends BaseTask<BinarySearchTaskGroup> {
+public class BinarySearchTask extends BaseTaskInGroup<BinarySearchTaskGroup> {
     @NotNull
     @Column(name = "solution", nullable = false)
     private Integer solution;
