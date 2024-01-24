@@ -19,4 +19,21 @@ class TaskGroupControllerTest {
         assertEquals(1, result.minNumber());
         assertEquals(5, result.maxNumber());
     }
+
+    @Test
+    void getRandomNumbers() {
+        // Arrange
+        var controller = new TaskGroupController(null);
+
+        // Act
+        var result = controller.getRandomNumbers();
+
+        // Assert
+        assertNotNull(result);
+        assertNotNull(result.getBody());
+        assertTrue(result.getBody().min() < 100);
+        assertTrue(result.getBody().max() < 1000);
+        assertTrue(result.getBody().min() >= 0);
+        assertTrue(result.getBody().min() < result.getBody().max());
+    }
 }

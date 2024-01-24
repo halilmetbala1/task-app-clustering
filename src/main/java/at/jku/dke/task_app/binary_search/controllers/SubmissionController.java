@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller for managing {@link BinarySearchSubmission}s.
  */
 @RestController
-public class SubmissionController extends BaseSubmissionController<BinarySearchTask, BinarySearchSubmissionDto> {
+public class SubmissionController extends BaseSubmissionController<BinarySearchSubmissionDto> {
     /**
      * Creates a new instance of class {@link SubmissionController}.
      *

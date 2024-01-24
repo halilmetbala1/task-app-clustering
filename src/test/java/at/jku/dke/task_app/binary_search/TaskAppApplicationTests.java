@@ -12,4 +12,9 @@ class TaskAppApplicationTests {
     void contextLoads() {
     }
 
+    @Test
+    void runs() {
+        TaskAppApplication.main(new String[0]);
+    }
+
 }
