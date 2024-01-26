@@ -7,7 +7,9 @@ import at.jku.dke.task_app.binary_search.data.entities.BinarySearchTaskGroup;
 import at.jku.dke.task_app.binary_search.data.repositories.BinarySearchTaskGroupRepository;
 import at.jku.dke.task_app.binary_search.dto.ModifyBinarySearchTaskGroupDto;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Locale;
 
@@ -32,11 +34,15 @@ public class BinarySearchTaskGroupService extends BaseTaskGroupService<BinarySea
 
     @Override
     protected BinarySearchTaskGroup createTaskGroup(long id, ModifyTaskGroupDto<ModifyBinarySearchTaskGroupDto> modifyTaskGroupDto) {
+        if (!modifyTaskGroupDto.taskGroupType().equals("binary-search"))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid task group type.");
         return new BinarySearchTaskGroup(modifyTaskGroupDto.additionalData().minNumber(), modifyTaskGroupDto.additionalData().maxNumber());
     }
 
     @Override
     protected void updateTaskGroup(BinarySearchTaskGroup taskGroup, ModifyTaskGroupDto<ModifyBinarySearchTaskGroupDto> modifyTaskGroupDto) {
+        if (!modifyTaskGroupDto.taskGroupType().equals("binary-search"))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid task group type.");
         taskGroup.setMinNumber(modifyTaskGroupDto.additionalData().minNumber());
         taskGroup.setMaxNumber(modifyTaskGroupDto.additionalData().maxNumber());
     }

@@ -9,7 +9,9 @@ import at.jku.dke.task_app.binary_search.data.repositories.BinarySearchTaskGroup
 import at.jku.dke.task_app.binary_search.data.repositories.BinarySearchTaskRepository;
 import at.jku.dke.task_app.binary_search.dto.ModifyBinarySearchTaskDto;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Locale;
 
@@ -35,11 +37,15 @@ public class BinarySearchTaskService extends BaseTaskInGroupService<BinarySearch
 
     @Override
     protected BinarySearchTask createTask(long id, ModifyTaskDto<ModifyBinarySearchTaskDto> modifyTaskDto) {
+        if (!modifyTaskDto.taskType().equals("binary-search"))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid task type.");
         return new BinarySearchTask(modifyTaskDto.additionalData().solution());
     }
 
     @Override
     protected void updateTask(BinarySearchTask task, ModifyTaskDto<ModifyBinarySearchTaskDto> modifyTaskDto) {
+        if (!modifyTaskDto.taskType().equals("binary-search"))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid task type.");
         task.setSolution(modifyTaskDto.additionalData().solution());
     }
 
