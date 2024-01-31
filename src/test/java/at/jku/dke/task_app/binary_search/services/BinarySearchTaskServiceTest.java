@@ -7,12 +7,12 @@ import at.jku.dke.task_app.binary_search.data.entities.BinarySearchTask;
 import at.jku.dke.task_app.binary_search.dto.ModifyBinarySearchTaskDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -21,7 +21,7 @@ class BinarySearchTaskServiceTest {
     @Test
     void createTask() {
         // Arrange
-        ModifyTaskDto<ModifyBinarySearchTaskDto> dto = new ModifyTaskDto<>(7L, BigDecimal.TEN, "binary_search", TaskStatus.APPROVED, new ModifyBinarySearchTaskDto(33));
+        ModifyTaskDto<ModifyBinarySearchTaskDto> dto = new ModifyTaskDto<>(7L, BigDecimal.TEN, "binary-search", TaskStatus.APPROVED, new ModifyBinarySearchTaskDto(33));
         BinarySearchTaskService service = new BinarySearchTaskService(null, null, null);
 
         // Act
@@ -32,9 +32,19 @@ class BinarySearchTaskServiceTest {
     }
 
     @Test
+    void createTaskInvalidType() {
+        // Arrange
+        ModifyTaskDto<ModifyBinarySearchTaskDto> dto = new ModifyTaskDto<>(7L, BigDecimal.TEN, "sql", TaskStatus.APPROVED, new ModifyBinarySearchTaskDto(33));
+        BinarySearchTaskService service = new BinarySearchTaskService(null, null, null);
+
+        // Act & Assert
+        assertThrows(ResponseStatusException.class, () -> service.createTask(3, dto));
+    }
+
+    @Test
     void updateTask() {
         // Arrange
-        ModifyTaskDto<ModifyBinarySearchTaskDto> dto = new ModifyTaskDto<>(7L, BigDecimal.TEN, "binary_search", TaskStatus.APPROVED, new ModifyBinarySearchTaskDto(33));
+        ModifyTaskDto<ModifyBinarySearchTaskDto> dto = new ModifyTaskDto<>(7L, BigDecimal.TEN, "binary-search", TaskStatus.APPROVED, new ModifyBinarySearchTaskDto(33));
         BinarySearchTaskService service = new BinarySearchTaskService(null, null, null);
         BinarySearchTask task = new BinarySearchTask(3);
 
@@ -43,6 +53,17 @@ class BinarySearchTaskServiceTest {
 
         // Assert
         assertEquals(dto.additionalData().solution(), task.getSolution());
+    }
+
+    @Test
+    void updateTaskInvalidType() {
+        // Arrange
+        ModifyTaskDto<ModifyBinarySearchTaskDto> dto = new ModifyTaskDto<>(7L, BigDecimal.TEN, "sql", TaskStatus.APPROVED, new ModifyBinarySearchTaskDto(33));
+        BinarySearchTaskService service = new BinarySearchTaskService(null, null, null);
+        BinarySearchTask task = new BinarySearchTask(3);
+
+        // Act & Assert
+        assertThrows(ResponseStatusException.class, () -> service.updateTask(task, dto));
     }
 
     @Test

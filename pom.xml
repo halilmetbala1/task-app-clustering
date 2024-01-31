@@ -15,7 +15,7 @@
     <version>0.0.3</version>
 
     <name>eTutor Task-App: Binary Search</name>
-    <description>eTutor Task-App for task types "binarysearch"</description>
+    <description>eTutor Task-App for task type "binary-search"</description>
     <packaging>jar</packaging>
 
     <properties>
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>at.jku.dke.etutor</groupId>
             <artifactId>etutor-task-app-starter</artifactId>
-            <version>0.0.3</version>
+            <version>0.0.4</version>
         </dependency>
 
         <!-- Spring -->
@@ -115,6 +115,7 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
+            <version>5.4.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
