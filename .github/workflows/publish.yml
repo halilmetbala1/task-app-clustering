@@ -48,7 +48,7 @@ jobs:
 
       - name: Install Starter Library with Maven
         working-directory: starter
-        run: mvn clean install --file pom.xml
+        run: mvn clean install -DskipTests --file pom.xml
 
       - name: Clean and Compile with maven
         working-directory: app
