@@ -29,7 +29,7 @@
         <dependency>
             <groupId>at.jku.dke.etutor</groupId>
             <artifactId>etutor-task-app-starter</artifactId>
-            <version>0.0.5</version>
+            <version>0.0.6</version>
         </dependency>
 
         <!-- Spring -->
