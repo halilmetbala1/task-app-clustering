@@ -25,6 +25,20 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub eTutor Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/eTutor-plus-plus/task-app-starter</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>at.jku.dke.etutor</groupId>
