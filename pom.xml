@@ -6,13 +6,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.1</version>
+        <version>3.2.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>at.jku.dke.etutor</groupId>
     <artifactId>task-app-binary-search</artifactId>
-    <version>0.0.3</version>
+    <version>1.0.0</version>
 
     <name>eTutor Task-App: Binary Search</name>
     <description>eTutor Task-App for task type "binary-search"</description>

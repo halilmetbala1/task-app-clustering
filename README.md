@@ -75,7 +75,7 @@ services:
 In production environment, the application requires two database users:
 
 * A database administrator user which has the permission to create the tables.
-* A JPA user which has read/write access (`SELECT, INSERT, UPDATE, DELETE, TRUNCATE`) to the database tables (see `./docker/create_user.sh` for example user creation statement).
+* A JPA user which has read/write access (`SELECT, INSERT, UPDATE, DELETE, TRUNCATE`) to the database tables.
 
 > In development environment, one user will be used for both.
 
