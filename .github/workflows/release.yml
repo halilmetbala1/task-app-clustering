@@ -31,18 +31,14 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
+          server-username: ${{ secrets.GH_MAVEN_STARTER_USER_NAME }}
+          server-password: ${{ secrets.GH_MAVEN_STARTER_ACCESS_TOKEN }}
 
       - name: Clean and Compile with maven
-        run: mvn -s $GITHUB_WORKSPACE/.github/workflows/maven-settings.xml -B clean git-commit-id:revision spring-boot:build-info compile --file pom.xml
-        env:
-          MVN_USER_NAME: ${{ secrets.GH_MAVEN_STARTER_USER_NAME }}
-          MVN_ACCESS_TOKEN: ${{ secrets.GH_MAVEN_STARTER_ACCESS_TOKEN }}
+        run: mvn -B clean git-commit-id:revision spring-boot:build-info compile --file pom.xml
 
       - name: Build with Maven
-        run: mvn -s $GITHUB_WORKSPACE/.github/workflows/maven-settings.xml -B package -DskipTests --file pom.xml
-        env:
-          MVN_USER_NAME: ${{ secrets.GH_MAVEN_STARTER_USER_NAME }}
-          MVN_ACCESS_TOKEN: ${{ secrets.GH_MAVEN_STARTER_ACCESS_TOKEN }}
+        run: mvn -B package -DskipTests --file pom.xml
 
       - name: Split PR title
         env:
