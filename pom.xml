@@ -27,7 +27,7 @@
 
     <repositories>
         <repository>
-            <id>github</id>
+            <id>github-starter</id>
             <url>https://maven.pkg.github.com/eTutor-plus-plus/task-app-starter</url>
         </repository>
     </repositories>
