@@ -31,8 +31,11 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
-          server-username: ${{ secrets.GH_MAVEN_STARTER_USER_NAME }}
-          server-password: ${{ secrets.GH_MAVEN_STARTER_ACCESS_TOKEN }}
+
+      - name: Configure Maven
+        uses: s4u/maven-settings-action@v3.0.0
+        with:
+          servers: '[{"id": "github-starter", "username": "${{ secrets.GH_MAVEN_STARTER_USER_NAME }}", "password": "${{ secrets.GH_MAVEN_STARTER_ACCESS_TOKEN }}"}]'
 
       - name: Clean and Compile with maven
         run: mvn -B clean git-commit-id:revision spring-boot:build-info compile --file pom.xml
