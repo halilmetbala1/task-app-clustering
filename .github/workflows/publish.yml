@@ -27,17 +27,8 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Starter Library
-        uses: actions/checkout@v4
-        with:
-          repository: eTutor-plus-plus/task-app-starter
-          ref: main
-          path: starter
-
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          path: app
 
       - name: Set up JDK 21
         uses: actions/setup-java@v3
@@ -46,16 +37,15 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Install Starter Library with Maven
-        working-directory: starter
-        run: mvn clean install -DskipTests --file pom.xml
+      - name: Configure Maven
+        uses: s4u/maven-settings-action@v3.0.0
+        with:
+          servers: '[{"id": "github-starter", "username": "${{ secrets.GH_MAVEN_STARTER_USER_NAME }}", "password": "${{ secrets.GH_MAVEN_STARTER_ACCESS_TOKEN }}"}]'
 
       - name: Clean and Compile with maven
-        working-directory: app
         run: mvn -B clean git-commit-id:revision spring-boot:build-info compile --file pom.xml
 
       - name: Build with Maven
-        working-directory: app
         run: mvn -B package -DskipTests --file pom.xml
 
       - name: Set up Docker Buildx
@@ -85,7 +75,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./app
+          context: ./
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
