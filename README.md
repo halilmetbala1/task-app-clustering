@@ -14,7 +14,10 @@ Task-App repositories should start with `task-app-` and end with the task type (
 
 In development environment, the API documentation is available at http://localhost:8081/docs.
 
-See [CONTRIBUTING.md](https://github.com/eTutor-plus-plus/task-app-starter/blob/main/CONTRIBUTING.md) for details.
+In order to run the application in development environment, the `dev` profile must be activated. 
+This can be done by setting the environment variable `SPRING_PROFILES_ACTIVE` to `dev` or by setting the profile in the IDE run configuration.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## Docker
 

@@ -12,6 +12,6 @@ public class OpenApiConfig extends BaseOpenApiConfig {
      * Creates a new instance of class {@link OpenApiConfig}.
      */
     public OpenApiConfig() {
-        super("eTutor - Binary Search API", "API for tasks of type <code>binary_search</code>", "dev");
+        super("eTutor - Binary Search API", "API for tasks of type <code>binary_search</code>", OpenApiConfig.class.getPackage().getImplementationVersion());
     }
 }
