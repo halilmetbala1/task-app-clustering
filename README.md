@@ -31,14 +31,14 @@ docker run -p 8090:8081 \
   -e SPRING_FLYWAY_USER=etutor_binary_search_admin \
   -e SPRING_FLYWAY_PASSWORD=adPwd \
   -e CLIENTS_API_KEYS_0_NAME=task-administration \
-  -e CLIENTS_API_KEYS_0_KEY=4fsda6f465sad4f6sfd \
+  -e CLIENTS_API_KEYS_0_KEY=some-secret-key \
   -e CLIENTS_API_KEYS_0_ROLES_0=CRUD \
   -e CLIENTS_API_KEYS_0_ROLES_1=SUBMIT \
   -e CLIENTS_API_KEYS_1_NAME=moodle \
-  -e CLIENTS_API_KEYS_1_KEY=as89df47s98ad7f98s7d \
+  -e CLIENTS_API_KEYS_1_KEY=another-secret-key \
   -e CLIENTS_API_KEYS_1_ROLES_0=SUBMIT \
   -e CLIENTS_API_KEYS_2_NAME=plagiarism-checker \
-  -e CLIENTS_API_KEYS_2_KEY=adf455jfil45646 \
+  -e CLIENTS_API_KEYS_2_KEY=key-for-reading-submissions \
   -e CLIENTS_API_KEYS_2_ROLES_0=READ_SUBMISSION \
   etutorplusplus/task-app-binary-search
 ```
@@ -62,14 +62,14 @@ services:
             SPRING_FLYWAY_USER: etutor_binary_search_admin
             SPRING_FLYWAY_PASSWORD: adPwd
             CLIENTS_API_KEYS_0_NAME: task-administration
-            CLIENTS_API_KEYS_0_KEY: 4fsda6f465sad4f6sfd
+            CLIENTS_API_KEYS_0_KEY: some-secret-key
             CLIENTS_API_KEYS_0_ROLES_0: CRUD
             CLIENTS_API_KEYS_0_ROLES_1: SUBMIT
             CLIENTS_API_KEYS_1_NAME: moodle
-            CLIENTS_API_KEYS_1_KEY: as89df47s98ad7f98s7d
+            CLIENTS_API_KEYS_1_KEY: another-secret-key
             CLIENTS_API_KEYS_1_ROLES_0: SUBMIT
             CLIENTS_API_KEYS_2_NAME: plagiarism-checker
-            CLIENTS_API_KEYS_2_KEY: adf455jfil45646
+            CLIENTS_API_KEYS_2_KEY: key-for-reading-submissions
             CLIENTS_API_KEYS_2_ROLES_0: READ_SUBMISSION
 ```
 
@@ -80,7 +80,7 @@ In production environment, the application requires two database users:
 * A database administrator user which has the permission to create the tables.
 * A JPA user which has read/write access (`SELECT, INSERT, UPDATE, DELETE, TRUNCATE`) to the database tables.
 
-> In development environment, one user will be used for both.
+> In development environment, one user will be used for both by default.
 
 The users must be configured via environment variables. The clients have to be configured via environment variables as well (`X`/`Y` stands for a 0-based index).
 
