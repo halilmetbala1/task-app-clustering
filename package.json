@@ -1,6 +1,6 @@
 {
     "name": "etutor-task-app-binary-search",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "private": true,
     "scripts": {
         "commit": "cz",
@@ -15,6 +15,12 @@
     "config": {
         "commitizen": {
             "path": "./node_modules/cz-conventional-changelog"
+        }
+    },
+    "commit-and-tag-version": {
+        "skip": {
+            "tag": true,
+            "changelog": true
         }
     }
 }
