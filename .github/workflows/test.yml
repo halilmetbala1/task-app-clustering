@@ -9,6 +9,7 @@ on:
       - main
     types:
       - opened
+      - reopened
 
 # Allow actions to read the repository contents and pull requests
 permissions:
