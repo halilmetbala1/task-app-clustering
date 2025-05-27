@@ -1,14 +1,14 @@
-# eTutor Task-App: Binary Search
+# eTutor Task-App: clustering
 
-This application provides a REST-interface for following task type: binary_search.
+This application provides a REST-interface for following task type: clustering.
 
 Students have to guess a number. The student's input is compared with the number stored in the solution, and it is returned whether the number sought is _smaller_, _equal_ to or
 _greater_ than the input.
 
-This project **can** be used as a template for new task apps. Replace all occurrences of `binarysearch`/`binary search`/`binary-search`/`binary_search` with the name of your task
+This project **can** be used as a template for new task apps. Replace all occurrences of `binarysearch`/`clustering`/`clustering`/`clustering` with the name of your task
 type.
 
-Task-App repositories should start with `task-app-` and end with the task type (e.g. `task-app-binary-search`).
+Task-App repositories should start with `task-app-` and end with the task type (e.g. `task-app-clustering`).
 
 ## Development
 
@@ -25,10 +25,10 @@ Start a new instance of the application using Docker:
 
 ```bash
 docker run -p 8090:8081 \ 
-  -e SPRING_DATASOURCE_URL="jdbc:postgresql://postgres:5432/etutor_binary_search" \
-  -e SPRING_DATASOURCE_USERNAME=etutor_binary_search \
+  -e SPRING_DATASOURCE_URL="jdbc:postgresql://postgres:5432/etutor_clustering" \
+  -e SPRING_DATASOURCE_USERNAME=etutor_clustering \
   -e SPRING_DATASOURCE_PASSWORD=myPwd \
-  -e SPRING_FLYWAY_USER=etutor_binary_search_admin \
+  -e SPRING_FLYWAY_USER=etutor_clustering_admin \
   -e SPRING_FLYWAY_PASSWORD=adPwd \
   -e CLIENTS_API_KEYS_0_NAME=task-administration \
   -e CLIENTS_API_KEYS_0_KEY=some-secret-key \
@@ -40,7 +40,7 @@ docker run -p 8090:8081 \
   -e CLIENTS_API_KEYS_2_NAME=plagiarism-checker \
   -e CLIENTS_API_KEYS_2_KEY=key-for-reading-submissions \
   -e CLIENTS_API_KEYS_2_ROLES_0=READ_SUBMISSION \
-  etutorplusplus/task-app-binary-search
+  etutorplusplus/task-app-clustering
 ```
 
 or with Docker Compose:
@@ -49,17 +49,17 @@ or with Docker Compose:
 version: '3.8'
 
 services:
-    task-app-binary-search:
-        image: etutorplusplus/task-app-binary-search
+    task-app-clustering:
+        image: etutorplusplus/task-app-clustering
         restart: unless-stopped
         ports:
             -   target: 8081
                 published: 8090
         environment:
-            SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/etutor_binary_search
-            SPRING_DATASOURCE_USERNAME: etutor_binary_search
+            SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/etutor_clustering
+            SPRING_DATASOURCE_USERNAME: etutor_clustering
             SPRING_DATASOURCE_PASSWORD: myPwd
-            SPRING_FLYWAY_USER: etutor_binary_search_admin
+            SPRING_FLYWAY_USER: etutor_clustering_admin
             SPRING_FLYWAY_PASSWORD: adPwd
             CLIENTS_API_KEYS_0_NAME: task-administration
             CLIENTS_API_KEYS_0_KEY: some-secret-key

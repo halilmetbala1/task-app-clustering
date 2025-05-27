@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="All Java Tests" type="JUnit" factoryName="JUnit">
-    <module name="task-app-binary-search" />
+    <module name="task-app-clustering" />
     <extension name="coverage" sample_coverage="false" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />

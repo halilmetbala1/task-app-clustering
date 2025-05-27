@@ -4,8 +4,8 @@ services:
   postgres:
     image: postgres:16
     environment:
-      - 'POSTGRES_DB=etutor_binary_search'
+      - 'POSTGRES_DB=etutor_clustering'
       - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=etutor_binary_search'
+      - 'POSTGRES_USER=etutor_clustering'
     ports:
       - '5434:5432'

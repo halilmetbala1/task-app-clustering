@@ -21,7 +21,7 @@ concurrency:
 
 env:
   REGISTRY: ${{ secrets.DOCKER_NAMESPACE }} # ghcr.io
-  IMAGE_NAME: task-app-binary-search # ${{ github.repository }}
+  IMAGE_NAME: task-app-clustering # ${{ github.repository }}
 
 jobs:
   publish:

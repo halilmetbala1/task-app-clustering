@@ -23,11 +23,11 @@ spring:
 ## Database
 #spring:
 #  datasource:
-#    url: jdbc:postgresql://localhost:5434/etutor_binary_search
+#    url: jdbc:postgresql://localhost:5434/etutor_clustering
 #    username: etutor
 #    password: TBD
 #  flyway:
-#    user: etutor_binary_search_admin
+#    user: etutor_clustering_admin
 #    password: TBD
 #
 ## API key definition
