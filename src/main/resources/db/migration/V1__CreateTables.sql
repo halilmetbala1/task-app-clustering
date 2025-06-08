@@ -6,10 +6,14 @@ CREATE CAST (CHARACTER VARYING as submission_mode) WITH INOUT AS IMPLICIT;
 
 CREATE TABLE task
 (
-    id            BIGINT        NOT NULL,
-    max_points    NUMERIC(7, 2) NOT NULL,
-    status        TASK_STATUS   NOT NULL,
-    solution      INTEGER       NOT NULL, -- custom column
+    id                          BIGINT          NOT NULL,
+    max_points                  NUMERIC(7, 2)   NOT NULL,
+    status                      TASK_STATUS     NOT NULL,
+    solution_instructions_de    TEXT            NOT NULL default '',
+    solution_instructions_en    TEXT            NOT NULL default '',
+    deduction_wrong_clusters    INTEGER         NOT NULL,
+    deduction_wrong_labels      INTEGER         NOT NULL,
+    deduction_wrong_centroids   INTEGER         NOT NULL,
     CONSTRAINT task_pk PRIMARY KEY (id)
 );
 

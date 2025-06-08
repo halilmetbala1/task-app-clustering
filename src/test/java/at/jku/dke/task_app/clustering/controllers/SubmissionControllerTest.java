@@ -9,7 +9,7 @@ import at.jku.dke.task_app.clustering.ClientSetupExtension;
 import at.jku.dke.task_app.clustering.DatabaseSetupExtension;
 import at.jku.dke.task_app.clustering.data.entities.ClusteringSubmission;
 import at.jku.dke.task_app.clustering.data.entities.ClusteringTask;
-import at.jku.dke.task_app.clustering.data.entities.enums.DifficultyLevel;
+import at.jku.dke.task_app.clustering.data.entities.enums.TaskLength;
 import at.jku.dke.task_app.clustering.data.entities.enums.DistanceMetric;
 import at.jku.dke.task_app.clustering.data.repositories.ClusteringSubmissionRepository;
 import at.jku.dke.task_app.clustering.data.repositories.ClusteringTaskRepository;
@@ -59,7 +59,10 @@ class SubmissionControllerTest {
             TaskStatus.APPROVED,
             3,
             DistanceMetric.EUCLIDEAN,
-            DifficultyLevel.EASY
+            TaskLength.SHORT,
+            2,
+            1,
+            1
         ));
         this.taskId = task.getId();
 
@@ -100,7 +103,8 @@ class SubmissionControllerTest {
             .header(AuthConstants.AUTH_TOKEN_HEADER_NAME, ClientSetupExtension.SUBMIT_API_KEY)
             .queryParams("persist", false)
             .contentType(ContentType.JSON)
-            .body(new SubmitSubmissionDto<>("test-user", "test-id", this.taskId, "de", SubmissionMode.SUBMIT, 3, new ClusteringSubmissionDto("5")))
+            .body(new SubmitSubmissionDto<>("test-user", "test-id", this.taskId, "de",
+                SubmissionMode.SUBMIT, 3, new ClusteringSubmissionDto("5")))
             // WHEN
             .when()
             .post("/api/submission")
@@ -111,7 +115,7 @@ class SubmissionControllerTest {
             .contentType(ContentType.JSON)
             .body("submissionId", nullValue())
             .body("grading.maxPoints", equalTo(2f))
-            .body("grading.points", equalTo(2f))
+            .body("grading.points", equalTo(0))
             .body("grading.generalFeedback", any(String.class))
             .body("grading.criteria", hasSize(1));
     }

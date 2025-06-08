@@ -6,12 +6,12 @@ import at.jku.dke.etutor.task_app.dto.TaskStatus;
 import at.jku.dke.task_app.clustering.ClientSetupExtension;
 import at.jku.dke.task_app.clustering.DatabaseSetupExtension;
 import at.jku.dke.task_app.clustering.data.entities.ClusteringTask;
-import at.jku.dke.task_app.clustering.data.entities.enums.DifficultyLevel;
+import at.jku.dke.task_app.clustering.data.entities.DataPoint;
+import at.jku.dke.task_app.clustering.data.entities.enums.TaskLength;
 import at.jku.dke.task_app.clustering.data.entities.enums.DistanceMetric;
 import at.jku.dke.task_app.clustering.data.repositories.ClusterRepository;
 import at.jku.dke.task_app.clustering.data.repositories.ClusteringTaskRepository;
 import at.jku.dke.task_app.clustering.dto.ModifyClusteringTaskDto;
-import at.jku.dke.task_app.clustering.dto.ClusteringTaskDto;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,18 +19,26 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.MessageSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith({DatabaseSetupExtension.class, ClientSetupExtension.class})
 class TaskControllerTest {
 
+    private MessageSource createTestMessageSource() {
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setBasename("messages"); // name of the file without .properties extension
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setUseCodeAsDefaultMessage(true); // prevents null if key is missing
+        return messageSource;
+    }
     @LocalServerPort
     private int port;
 
@@ -50,12 +58,28 @@ class TaskControllerTest {
         ClusteringTask task = new ClusteringTask(2L,
             BigDecimal.TWO,
             TaskStatus.APPROVED,
-            3,
+            2,
             DistanceMetric.EUCLIDEAN,
-            DifficultyLevel.EASY
+            TaskLength.MEDIUM,
+            2,
+            1,
+            1
         );
-        //ClusteringTaskGenerator.generateAndSolve(task);
+        List<DataPoint> mockPoints = List.of(
+            new DataPoint(13, 87, 'A', null),
+            new DataPoint(38, 73, 'B', null),
+            new DataPoint(77, 3, 'C', null),
+            new DataPoint(39, 3, 'D', null),
+            new DataPoint(54, 19, 'E', null),
+            new DataPoint(96, 68, 'F', null),
+            new DataPoint(82, 7, 'G', null),
+            new DataPoint(82, 80, 'H', null),
+            new DataPoint(85, 36, 'I', null),
+            new DataPoint(95, 69, 'J', null),
+            new DataPoint(2, 34, 'K', null)
+        );
 
+        task.solve(mockPoints, createTestMessageSource());
         this.taskId = this.repository.save(task).getId();
     }
 
@@ -71,7 +95,7 @@ class TaskControllerTest {
             .log().ifValidationFails()
             .statusCode(200)
             .contentType(ContentType.JSON)
-            .body("numberOfClusters", equalTo(3));
+            .body("numberOfClusters", equalTo(2));
     }
 
     @Test
@@ -105,7 +129,10 @@ class TaskControllerTest {
         ModifyClusteringTaskDto newDto = new ModifyClusteringTaskDto(
             3,
             DistanceMetric.EUCLIDEAN,
-            DifficultyLevel.MEDIUM
+            TaskLength.MEDIUM,
+            2,
+            1,
+            1
         );
 
         given()
@@ -120,7 +147,8 @@ class TaskControllerTest {
             .statusCode(201)
             .contentType(ContentType.JSON)
             .header("Location", containsString("/api/task/" + (this.taskId + 2)))
-            .body("numberOfClusters", equalTo(3));
+            .body("descriptionEn", containsString("Perform the k-means algorithm"))
+            .body("descriptionDe", containsString("Führen Sie den k-Means-Algorithmus"));
     }
 
     @Test
@@ -128,7 +156,10 @@ class TaskControllerTest {
         ModifyClusteringTaskDto updateDto = new ModifyClusteringTaskDto(
             4,
             DistanceMetric.MANHATTAN,
-            DifficultyLevel.HARD
+            TaskLength.LONG,
+            2,
+            1,
+            1
         );
 
         given()

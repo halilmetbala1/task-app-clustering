@@ -26,6 +26,9 @@ public class Cluster {
 
     @Column(nullable = false)
     private double y;
+
+    @NotNull
+    private String name;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id", nullable = false)
     private ClusteringTask task;
@@ -35,18 +38,20 @@ public class Cluster {
 
     public Cluster() {}
 
-    public Cluster(Long id, ClusterType type, double x, double y, ClusteringTask task) {
+    public Cluster(Long id, ClusterType type, double x, double y, String name, ClusteringTask task) {
         this.id = id;
         this.type = type;
         this.task = task;
         this.x = x;
         this.y = y;
+        this.name = name;
     }
-    public Cluster(ClusterType type, double x, double y, ClusteringTask task) {
+    public Cluster(ClusterType type, double x, double y, String name, ClusteringTask task) {
         this.type = type;
         this.task = task;
         this.x = x;
         this.y = y;
+        this.name = name;
     }
 
     public ClusterType getType() {
@@ -79,6 +84,15 @@ public class Cluster {
     public void setY(double y) {
         this.y = y;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<DataPoint> getDataPoints() {
         return dataPoints;
     }
