@@ -144,9 +144,9 @@ class EvaluationServiceTest {
         assertNotNull(result);
         assertEquals(BigDecimal.ZERO.stripTrailingZeros(), result.points().stripTrailingZeros());
         assertEquals(BigDecimal.TEN.stripTrailingZeros(), result.maxPoints().stripTrailingZeros());
-        assertTrue(result.generalFeedback().contains("Schritte zur Lösung der Clustering-Aufgabe"));
+        assertTrue(result.generalFeedback().contains("Fehlerhaftes Eingabeformat"));
         assertEquals(1, result.criteria().size());
-        assertTrue(result.criteria().stream().anyMatch(x -> x.name().equals("Visualisierung")));
+        assertTrue(result.criteria().stream().anyMatch(x -> x.name().equals("Syntaxfehler")));
     }
 
     @Test

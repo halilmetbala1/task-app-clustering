@@ -32,7 +32,11 @@ public class TaskController extends BaseTaskController<ClusteringTask, Clusterin
             task.getNumberOfClusters(),
             task.getNumberOfDataPoints(),
             task.getDistanceMetric(),
-            task.getTaskLength()
+            task.getTaskLength(),
+            task.getDeductionWrongClusters(),
+            task.getDeductionWrongLabels(),
+            task.getDeductionWrongCentroids(),
+            task.getFullSolutionString()
         );
     }
 }

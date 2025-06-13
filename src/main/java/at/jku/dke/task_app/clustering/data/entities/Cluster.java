@@ -33,7 +33,7 @@ public class Cluster {
     @JoinColumn(name = "task_id", nullable = false)
     private ClusteringTask task;
 
-    @OneToMany(mappedBy = "cluster", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cluster", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<DataPoint> dataPoints = new ArrayList<>();
 
     public Cluster() {}

@@ -67,25 +67,12 @@ public class EvaluationService {
         List<CriterionDto> criteria = new ArrayList<>();
         BigDecimal totalScore = task.getMaxPoints();
 
+        //Run always 0 points
+        if(submission.mode() == SubmissionMode.RUN){
+            totalScore = BigDecimal.ZERO;
+        }
+
         try {
-
-            if (submission.mode() == SubmissionMode.DIAGNOSE && submission.feedbackLevel() == 3){
-                //"Visualization"
-                criteria.add(new CriterionDto(
-                    this.messageSource.getMessage("criterium.visualization", null, locale),
-                    null,
-                    true,
-                    ClusteringImageGeneration.generateClusterImage(task, true, messageSource, locale)
-                ));
-
-                String fb = task.getSolutionIterationsString();
-
-
-
-                fb += task.getSolutionInstructions(locale);
-
-                return new GradingDto(task.getMaxPoints(), BigDecimal.ZERO, fb, criteria);
-            }
 
             String feedback = "";
             List<IterationSnapshot> studentIterations = parseUserIterations(task, submission.submission().input(), this.messageSource, locale);
@@ -102,23 +89,25 @@ public class EvaluationService {
             if (userIterations != totalIterations) {
                 for(int j = 0; j<Math.abs(totalIterations - userIterations); j++){
                     deduction += task.getDeductionWrongClusters();
-                    if(submission.feedbackLevel() > 0){
-                        //"Wrong number of iterations have been submitted ({0}/{1})."
-                        String msg = this.messageSource.getMessage("criterium.clustering.incomplete",
-                            new Object[]{userIterations, totalIterations}, locale);
-                        criteria.add(new CriterionDto(
-                            //"Point deduction"
-                            this.messageSource.getMessage("criterium.deduction.title", null, locale),
-                            BigDecimal.valueOf(task.getDeductionWrongClusters()).negate(),
-                            false,
-                            msg
-                        ));
-                    }
-                    if(submission.feedbackLevel() == 3){
-                        suggestion =this.messageSource.getMessage(
-                            //"Try finishing the optimization by recalculating the centroid positions."
-                            "hint.iterationCountError",
-                            new Object[]{userIterations, totalIterations}, locale);
+                    if(submission.mode() != SubmissionMode.RUN){
+                        if(submission.feedbackLevel() > 0){
+                            //"Wrong number of iterations have been submitted ({0}/{1})."
+                            String msg = this.messageSource.getMessage("criterium.clustering.incomplete",
+                                new Object[]{userIterations, totalIterations}, locale);
+                            criteria.add(new CriterionDto(
+                                //"Point deduction"
+                                this.messageSource.getMessage("criterium.deduction.title", null, locale),
+                                BigDecimal.valueOf(task.getDeductionWrongClusters()).negate(),
+                                false,
+                                msg
+                            ));
+                        }
+                        if(submission.feedbackLevel() == 3){
+                            suggestion =this.messageSource.getMessage(
+                                //"Try finishing the optimization by recalculating the centroid positions."
+                                "hint.iterationCountError",
+                                new Object[]{userIterations, totalIterations}, locale);
+                        }
                     }
                 }
             }
@@ -130,113 +119,161 @@ public class EvaluationService {
                 //Student iteration
                 IterationSnapshot actualSnap = studentIterations.get(i);
 
-                // Variablen aus config laden
-                double tolerance = AppConfig.getDouble("coordinate.tolerance", 0.5);
+                //no feedback at RUN
+                if(submission.mode() != SubmissionMode.RUN){
 
-                //boolean match = expected.equals(actual);
-                IterationComparison result = compareIteration(expectedSnap, actualSnap, tolerance);
+                    // Variablen aus config laden
+                    double tolerance = AppConfig.getDouble("coordinate.tolerance", 0.5);
 
-                String fb = "";
-                if (result.centroidsMatch() && result.pointsMatch()) {
-                    matchedIterations++;
-                    continue;
-                }
-                else{
-                    //"Error in iteration: {0}."
-                    fb = this.messageSource.getMessage("error.iteration", new Object[]{i + 1}, locale) + " ";
+                    //boolean match = expected.equals(actual);
+                    IterationComparison result = compareIteration(expectedSnap, actualSnap, tolerance);
 
-                    if (submission.feedbackLevel() == 3) {
-                        //"Expected"
-                        String error = this.messageSource.getMessage("error.expected", new Object[]{solutionIterations.get(i).getIterationString()}, locale);
-                        //"Actual"
-                        error += this.messageSource.getMessage("error.actual", new Object[]{studentIterations.get(i).toString()}, locale);
-                        criteria.add(new CriterionDto(
-                            //"Error"
-                            this.messageSource.getMessage("criterium.clustering.error", null, locale),
-                            null,
-                            false,
-                            error));
+                    String fb = "";
+                    if (result.centroidsMatch() && result.pointsMatch()) {
+                        matchedIterations++;
+                        continue;
                     }
-                }
+                    else{
+                        //"Error in iteration: {0}."
+                        fb = this.messageSource.getMessage("error.iteration", new Object[]{i + 1}, locale) + " ";
 
-                int clusterDiff = Math.abs(expectedSnap.centroids.size() - actualSnap.centroids.size());
-                if(clusterDiff > 0){
-
-                    for(int j = 0; j<clusterDiff; j++){
-                        deduction += task.getDeductionWrongClusters();
-
-                        if (submission.feedbackLevel() > 0) {
+                        if (submission.feedbackLevel() == 3) {
+                            //"Expected"
+                            String error = this.messageSource.getMessage("error.expected", new Object[]{solutionIterations.get(i).getIterationString()}, locale);
+                            //"Actual"
+                            error += this.messageSource.getMessage("error.actual", new Object[]{studentIterations.get(i).toString()}, locale);
                             criteria.add(new CriterionDto(
-                                //"Point deduction"
-                                this.messageSource.getMessage("criterium.deduction.title", null, locale),
-                                //-2
-                                BigDecimal.valueOf(task.getDeductionWrongClusters()).negate(),
+                                //"Error"
+                                this.messageSource.getMessage("criterium.clustering.error", null, locale),
+                                null,
                                 false,
-                                //"Wrong amount of clusters."
-                                fb + this.messageSource.getMessage("criterium.deduction.wrongClusters", null, locale)));
+                                error));
                         }
                     }
-                    if(submission.feedbackLevel() >= 2){
-                        suggestion = this.messageSource.getMessage(
-                                //"Number of clusters provided incorrect. Should be: {0}. Is: {1}."
-                                "hint.clusterCountError",
-                                new Object[]{expectedSnap.centroids.size(), actualSnap.centroids.size()}, locale);
-                    }
-                }
-                if (!result.centroidsMatch) {
 
-                    for(int j = 0; j<result.centroidErrors();j++){
-                        deduction += task.getDeductionWrongCentroids();
+                    int clusterDiff = Math.abs(expectedSnap.centroids.size() - actualSnap.centroids.size());
+                    if(clusterDiff > 0){
 
-                        if (submission.feedbackLevel() > 0) {
-                            criteria.add(new CriterionDto(
-                                //"Point deduction"
-                                this.messageSource.getMessage("criterium.deduction.title", null, locale),
-                                //-1
-                                BigDecimal.valueOf(task.getDeductionWrongCentroids()).negate(),
-                                false,
-                                //"Wrong coordinate of centroid."
-                                fb + this.messageSource.getMessage("criterium.deduction.wrongCentroids", null, locale)));
+                        for(int j = 0; j<clusterDiff; j++){
+                            deduction += task.getDeductionWrongClusters();
+
+                            if (submission.feedbackLevel() > 0) {
+                                criteria.add(new CriterionDto(
+                                    //"Point deduction"
+                                    this.messageSource.getMessage("criterium.deduction.title", null, locale),
+                                    //-2
+                                    BigDecimal.valueOf(task.getDeductionWrongClusters()).negate(),
+                                    false,
+                                    //"Wrong amount of clusters."
+                                    fb + this.messageSource.getMessage("criterium.deduction.wrongClusters", null, locale)));
+                            }
                         }
-
-                    }
-                    if(submission.feedbackLevel() >= 2) {
-                        //"Centroid coordinates incorrect. Maybe try recalculating the centroid position?"
-                        suggestion = this.messageSource.getMessage("hint.centroidError", null, locale);
-                    }
-                }
-                if (!result.pointsMatch) {
-
-                    for(int j = 0; j<result.pointErrors(); j++){
-
-                        deduction += task.getDeductionWrongLabels();
-
-                        if (submission.feedbackLevel() > 0) {
-                            criteria.add(new CriterionDto(
-                                //"Point deduction"
-                                this.messageSource.getMessage("criterium.deduction.title", null, locale),
-                                //-1
-                                BigDecimal.valueOf(task.getDeductionWrongLabels()).negate(),
-                                false,
-                                //"Wrong assignment of data point."
-                                fb + this.messageSource.getMessage("criterium.deduction.wrongAssignment", null, locale)));
+                        if(submission.feedbackLevel() >= 2){
+                            suggestion = this.messageSource.getMessage(
+                                    //"Number of clusters provided incorrect. Should be: {0}. Is: {1}."
+                                    "hint.clusterCountError",
+                                    new Object[]{expectedSnap.centroids.size(), actualSnap.centroids.size()}, locale);
                         }
                     }
-                    if(submission.feedbackLevel() >= 2) {
-                        //"Data point assigned incorrectly. Maybe try recalculating the distances?"
-                        suggestion = this.messageSource.getMessage("hint.assignmentError", null, locale);
+                    if (!result.centroidsMatch) {
+
+                        for(int j = 0; j<result.centroidErrors();j++){
+                            deduction += task.getDeductionWrongCentroids();
+
+                            if (submission.feedbackLevel() > 0) {
+                                criteria.add(new CriterionDto(
+                                    //"Point deduction"
+                                    this.messageSource.getMessage("criterium.deduction.title", null, locale),
+                                    //-1
+                                    BigDecimal.valueOf(task.getDeductionWrongCentroids()).negate(),
+                                    false,
+                                    //"Wrong coordinate of centroid."
+                                    fb + this.messageSource.getMessage("criterium.deduction.wrongCentroids", null, locale)));
+                            }
+
+                        }
+                        if(submission.feedbackLevel() >= 2) {
+                            //"Centroid coordinates incorrect. Maybe try recalculating the centroid position?"
+                            suggestion = this.messageSource.getMessage("hint.centroidError", null, locale);
+                        }
+                    }
+                    if (!result.pointsMatch) {
+
+                        for(int j = 0; j<result.pointErrors(); j++){
+
+                            deduction += task.getDeductionWrongLabels();
+
+                            if (submission.feedbackLevel() > 0) {
+                                criteria.add(new CriterionDto(
+                                    //"Point deduction"
+                                    this.messageSource.getMessage("criterium.deduction.title", null, locale),
+                                    //-1
+                                    BigDecimal.valueOf(task.getDeductionWrongLabels()).negate(),
+                                    false,
+                                    //"Wrong assignment of data point."
+                                    fb + this.messageSource.getMessage("criterium.deduction.wrongAssignment", null, locale)));
+                            }
+                        }
+                        if(submission.feedbackLevel() >= 2) {
+                            //"Data point assigned incorrectly. Maybe try recalculating the distances?"
+                            suggestion = this.messageSource.getMessage("hint.assignmentError", null, locale);
+                        }
                     }
                 }
             }
 
-            //Give the user specific hints in full feedback mode
-            if (submission.feedbackLevel() == 3 && !suggestion.isEmpty()) {
-                criteria.add(new CriterionDto(
-                    //"Hint"
-                    this.messageSource.getMessage("criterium.clustering.hint", null, locale),
-                    null,
-                    false,
-                    suggestion));
+            if(submission.mode() == SubmissionMode.RUN || submission.feedbackLevel() == 0){
+                //"No syntax errors."
+                feedback = this.messageSource.getMessage("feedback.correctSyntax",
+                    null, locale);
+            }
+            if(submission.mode() != SubmissionMode.RUN){
+
+                if (submission.feedbackLevel() > 0) {
+                    //"{0} of {1} iterations were evaluated correctly."
+                    feedback = this.messageSource.getMessage("evaluation.summary",
+                        new Object[]{matchedIterations, totalIterations}, locale);
+                }
+
+                //Give the user specific hints in full feedback mode
+                if (submission.feedbackLevel() == 3 && !suggestion.isEmpty()) {
+                    criteria.add(new CriterionDto(
+                        //"Hint"
+                        this.messageSource.getMessage("criterium.clustering.hint", null, locale),
+                        null,
+                        false,
+                        suggestion));
+                }
+
+                if (submission.feedbackLevel() >= 2) {
+                    //"Visualization"
+                    criteria.add(new CriterionDto(
+                        this.messageSource.getMessage("criterium.visualization", null, locale),
+                        null,
+                        true,
+                        ClusteringImageGeneration.generateClusterImage(task, true, messageSource, locale)
+                    ));
+                }
+
+                if (submission.feedbackLevel() == 3) {
+                    String fb = task.getSolutionIterationsString();
+
+                    //"Solution"
+                    criteria.add(new CriterionDto(
+                        this.messageSource.getMessage("criterium.clustering.solution", null, locale),
+                        null,
+                        true,
+                        fb));
+
+                    fb = task.getSolutionInstructions(locale);
+
+                    //"Instructions"
+                    criteria.add(new CriterionDto(
+                        this.messageSource.getMessage("criterium.clustering.instructions", null, locale),
+                        null,
+                        true,
+                        fb));
+                }
             }
 
             //deduct points
@@ -244,46 +281,6 @@ public class EvaluationService {
             //at least 0 points, no negative points
             totalScore = totalScore.max(BigDecimal.ZERO);
 
-            if(submission.feedbackLevel() == 0){
-                //"No syntax errors."
-                feedback = this.messageSource.getMessage("feedback.correctSyntax",
-                    null, locale);
-            }
-            else if (submission.feedbackLevel() > 0) {
-                //"{0} of {1} iterations were evaluated correctly."
-                feedback = this.messageSource.getMessage("evaluation.summary",
-                    new Object[]{matchedIterations, totalIterations}, locale);
-            }
-
-            if (submission.feedbackLevel() >= 2) {
-                //"Visualization"
-                criteria.add(new CriterionDto(
-                    this.messageSource.getMessage("criterium.visualization", null, locale),
-                    null,
-                    true,
-                    ClusteringImageGeneration.generateClusterImage(task, true, messageSource, locale)
-                ));
-            }
-
-            if (submission.feedbackLevel() == 3) {
-                String fb = task.getSolutionIterationsString();
-
-                //"Solution"
-                criteria.add(new CriterionDto(
-                    this.messageSource.getMessage("criterium.clustering.solution", null, locale),
-                    null,
-                    true,
-                    fb));
-
-                fb = task.getSolutionInstructions(locale);
-
-                //"Instructions"
-                criteria.add(new CriterionDto(
-                    this.messageSource.getMessage("criterium.clustering.instructions", null, locale),
-                    null,
-                    true,
-                    fb));
-            }
             return new GradingDto(task.getMaxPoints(), totalScore, feedback, criteria);
 
         } catch (IllegalArgumentException ex) {
@@ -310,11 +307,11 @@ public class EvaluationService {
 
         List<PointDto> unmatchedActualCentroids = new ArrayList<>(actual.centroids);
         boolean centroidsMatch = true;
-        boolean pointsMatch = true;
 
         int centroidErrorCount = 0;
-        int pointErrorCount = 0;
 
+        Map<Character, Integer> expectedPointMap = new HashMap<>();
+        Map<Character, Integer> actualPointMap = new HashMap<>();
 
         for (int i = 0; i < expected.centroids.size(); i++) {
             PointDto ec = expected.centroids.get(i);
@@ -337,20 +334,29 @@ public class EvaluationService {
             List<DataPoint> expectedPoints = expected.assignments.get(i);
             List<DataPoint> actualPoints = actual.assignments.getOrDefault(actualIndex, List.of());
 
-            Set<Character> expectedNames = expectedPoints.stream().map(DataPoint::getName).collect(Collectors.toSet());
-            Set<Character> actualNames = actualPoints.stream().map(DataPoint::getName).collect(Collectors.toSet());
-
-            Set<Character> symmetricDiff = new HashSet<>(expectedNames);
-            symmetricDiff.addAll(actualNames);
-            Set<Character> intersection = new HashSet<>(expectedNames);
-            intersection.retainAll(actualNames);
-            symmetricDiff.removeAll(intersection); // Now contains only the incorrect ones
-
-            if (!symmetricDiff.isEmpty()) {
-                pointsMatch = false;
-                pointErrorCount += symmetricDiff.size();
+            for (DataPoint dp : expectedPoints) {
+                expectedPointMap.put(dp.getName(), i);
+            }
+            for (DataPoint dp : actualPoints) {
+                actualPointMap.put(dp.getName(), actualIndex);
             }
         }
+
+        // Calculate point mismatches only once
+        Set<Character> allPointNames = new HashSet<>();
+        allPointNames.addAll(expectedPointMap.keySet());
+        allPointNames.addAll(actualPointMap.keySet());
+
+        int pointErrorCount = 0;
+        for (Character name : allPointNames) {
+            Integer expectedCluster = expectedPointMap.get(name);
+            Integer actualCluster = actualPointMap.get(name);
+            if (!Objects.equals(expectedCluster, actualCluster)) {
+                pointErrorCount++;
+            }
+        }
+
+        boolean pointsMatch = pointErrorCount == 0;
 
         return new IterationComparison(centroidsMatch, pointsMatch, centroidErrorCount, pointErrorCount);
     }

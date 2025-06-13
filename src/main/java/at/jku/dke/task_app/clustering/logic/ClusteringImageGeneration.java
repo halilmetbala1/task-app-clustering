@@ -189,7 +189,16 @@ public class ClusteringImageGeneration {
         try (var baos = new ByteArrayOutputStream()) {
             ImageIO.write(image, "png", baos);
             String base64EncodedImage = Base64.getEncoder().encodeToString(baos.toByteArray());
-            return "<img src=\"data:image/png;base64," + base64EncodedImage + "\" alt=\"K-Means Result\">";
+
+            String ret = "<img src=\"data:image/png;base64," + base64EncodedImage + "\" alt=\"K-Means Result\">";
+
+            if (showSolution) {
+                //"Note: The circle does not represent the cluster, it is just a visual aid."
+                String hint = messageSource.getMessage("legend.hint.visualAid", null, locale);
+                ret += "<p><i>" + hint + "</i></p><br>";
+            }
+
+            return ret;
         } catch (IOException e) {
             return "<p>" + e.getMessage() + "</p>";
         }

@@ -19,7 +19,11 @@ public record ClusteringTaskDto(
     @NotNull @Min(1) Integer numberOfClusters,
     @NotNull @Min(1) Integer numberOfDataPoints,
     @NotNull DistanceMetric distanceMetric,
-    @NotNull TaskLength taskLength
+    @NotNull TaskLength taskLength,
+    @NotNull @Min(0) Integer deductionWrongClusters,
+    @NotNull @Min(0) Integer deductionWrongLabels,
+    @NotNull @Min(0) Integer deductionWrongCentroids,
+    String solution
 ) implements Serializable {
 
 }

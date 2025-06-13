@@ -10,8 +10,7 @@ import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -231,5 +230,46 @@ class ClusteringTaskTest {
         assertNotNull(task.getSolutionInstructionsDe());
         assertNotNull(task.getSolutionInstructionsEn());
         assertFalse(task.getSolutionIterations().isEmpty(), "There should be iterations recorded.");
+    }
+
+    @Test
+    void testAssignPointsToCentroids_TieBreaker() {
+        // Arrange
+        ClusteringTask task = new ClusteringTask(BigDecimal.TEN, TaskStatus.APPROVED, 2, DistanceMetric.EUCLIDEAN, TaskLength.SHORT);
+        MessageSource messageSource = Mockito.mock(MessageSource.class);
+
+        // Minimal translation stubs
+        Mockito.when(messageSource.getMessage(Mockito.anyString(), Mockito.any(), Mockito.any(Locale.class)))
+            .thenReturn("");
+
+        List<DataPoint> inputPoints = List.of(
+            new DataPoint(0, 1, 'A', null),
+            new DataPoint(0, 2, 'B', null),
+            new DataPoint(0, 3, 'C', null)
+        );
+
+        List<PointDto> centroids = List.of(
+            new PointDto(0, 1), // Cluster 0
+            new PointDto(0, 3)  // Cluster 1
+        );
+
+        Map<Integer, List<DataPoint>> assignments = new HashMap<>();
+        assignments.put(0, new ArrayList<>());
+        assignments.put(1, new ArrayList<>());
+
+        // Act
+        List<Integer> result = task.assignPointsToCentroids(
+            inputPoints, centroids, assignments,
+            new StringBuilder(), new StringBuilder(),
+            messageSource, DistanceMetric.EUCLIDEAN
+        );
+
+        // Assert
+        assertEquals(0, (int) result.get(0)); // A -> C1
+        assertEquals(0, (int) result.get(1)); // B -> closer to C1 (1.0 vs 1.0) → tie-breaker chooses lower index
+        assertEquals(1, (int) result.get(2)); // C -> C2
+
+        assertEquals(2, assignments.get(0).size());
+        assertEquals(1, assignments.get(1).size());
     }
 }

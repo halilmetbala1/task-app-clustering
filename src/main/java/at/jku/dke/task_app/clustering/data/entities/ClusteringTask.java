@@ -1,12 +1,16 @@
 package at.jku.dke.task_app.clustering.data.entities;
 
 import at.jku.dke.etutor.task_app.data.entities.BaseTask;
+import at.jku.dke.etutor.task_app.dto.CriterionDto;
+import at.jku.dke.etutor.task_app.dto.GradingDto;
 import at.jku.dke.etutor.task_app.dto.TaskStatus;
 import at.jku.dke.task_app.clustering.config.AppConfig;
 import at.jku.dke.task_app.clustering.data.entities.enums.ClusterType;
 import at.jku.dke.task_app.clustering.data.entities.enums.DistanceMetric;
 import at.jku.dke.task_app.clustering.data.entities.enums.TaskLength;
 import at.jku.dke.task_app.clustering.dto.PointDto;
+import at.jku.dke.task_app.clustering.logic.ClusteringImageGeneration;
+import at.jku.dke.task_app.clustering.services.ClusteringMessageService;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.context.MessageSource;
@@ -56,10 +60,10 @@ public class ClusteringTask extends BaseTask {
     @Column(name = "deduction_wrong_centroids", nullable = false)
     private int deductionWrongCentroids;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Cluster> clusters = new ArrayList<>();
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("orderId ASC")
     private List<SolutionIteration> solutionIterations = new ArrayList<>();
     public ClusteringTask() {
@@ -346,7 +350,7 @@ public class ClusteringTask extends BaseTask {
 
                 // Show user input format as example
                 htmlDocDe.append(String.format(messageSource.getMessage("doc.steps.iteration.result", new Object[]{snapshot.toString()}, Locale.GERMAN)));
-                htmlDocDe.append(String.format(messageSource.getMessage("doc.steps.iteration.result", new Object[]{snapshot.toString()}, Locale.ENGLISH)));
+                htmlDocEn.append(String.format(messageSource.getMessage("doc.steps.iteration.result", new Object[]{snapshot.toString()}, Locale.ENGLISH)));
             }
 
             if (!changed) {
@@ -475,7 +479,7 @@ public class ClusteringTask extends BaseTask {
         return centroidChanged;
     }
 
-    private List<Integer> assignPointsToCentroids(
+    public List<Integer> assignPointsToCentroids(
         List<DataPoint> inputPoints,
         List<PointDto> centroids,
         Map<Integer, List<DataPoint>> assignments,
@@ -518,6 +522,7 @@ public class ClusteringTask extends BaseTask {
                 distLineEn.append(messageSource.getMessage("doc.steps.assignmentDistance",
                     new Object[]{metricEn, cIndex + 1, formula, dist}, Locale.ENGLISH));
 
+                //tie-breaker at same distance implicit: first centroid by index will be chosen
                 if (dist < minDist) {
                     minDist = dist;
                     bestCluster = cIndex;
@@ -533,8 +538,8 @@ public class ClusteringTask extends BaseTask {
             currentAssignments.add(bestCluster);
         }
 
-        htmlDocDe.append("</ul></ul>");
-        htmlDocEn.append("</ul></ul>");
+        htmlDocDe.append("</ul>");
+        htmlDocEn.append("</ul>");
 
         return currentAssignments;
     }
@@ -608,5 +613,20 @@ public class ClusteringTask extends BaseTask {
         }
         else
             return solutionInstructionsDe;
+    }
+
+    public String getFullSolutionString() {
+
+        //add visualization
+        String fb = ClusteringImageGeneration.generateClusterImage(this, true, ClusteringMessageService.getMessageSource(), Locale.ENGLISH);
+
+        fb += "<b>Solution</b><br>";
+        //add solution to feedback
+        fb += this.getSolutionIterationsString();
+
+        //add instructions to feedback
+        fb += this.getSolutionInstructions(Locale.ENGLISH);
+
+        return fb;
     }
 }

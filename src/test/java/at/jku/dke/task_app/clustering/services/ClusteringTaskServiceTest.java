@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 class ClusteringTaskServiceTest {
     private MessageSource createTestMessageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasename("messages"); // refers to messages_en.properties etc.
+        messageSource.setBasename("messages"); // refers to messages.properties etc.
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setUseCodeAsDefaultMessage(true);
         return messageSource;
